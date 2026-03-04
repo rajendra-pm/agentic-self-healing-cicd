@@ -5,7 +5,7 @@ on:
     branches:
       - main
 
-jobs:
+jobs: 
 
   build-test-scan:
     runs-on: ubuntu-latest
