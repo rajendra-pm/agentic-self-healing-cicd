@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agentic-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agentic-app
+  template:
+    metadata:
+      labels:
+        app: agentic-app
+    spec:
+      containers:
+        - name: agentic-app
+          image: rajendra3/agentic-app:latest
+          ports:
+            - containerPort: 3000
