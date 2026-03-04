@@ -1,0 +1,16 @@
+{
+  "name": "agentic-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@opentelemetry/api": "^1.8.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
