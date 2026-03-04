@@ -1,0 +1,70 @@
+name: Agentic Self-Healing CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  build-test-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: |
+          cd app
+          npm install
+
+      - name: Run Tests
+        run: |
+          cd app
+          npm test || echo "Test Failed" > ../failure.log
+
+      - name: Run AI Agent on Failure
+        run: |
+          python3 ai-agent/agent.py
+
+      - name: Build Docker Image
+        run: |
+          docker build -t agentic-app -f docker/Dockerfile .
+
+      - name: Send Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "🚀 CI Pipeline Completed for Agentic Self-Healing Platform.\nCheck GitHub Actions for details."
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  approval:
+    needs: build-test-scan
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Awaiting Manual Approval
+        run: echo "Production deployment approved. Proceeding..."
+
+  deploy:
+    needs: approval
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy Placeholder (GitOps via ArgoCD)
+        run: |
+          echo "Kubernetes manifests are managed via GitOps."
+          echo "ArgoCD will sync changes from the k8s/ folder automatically."
